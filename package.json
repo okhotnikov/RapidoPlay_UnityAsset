@@ -1,0 +1,21 @@
+{
+  "name": "com.eokhotnikov.rapidoplay",
+  "version": "1.0.0",
+  "displayName": "RapidoPlay",
+  "description": "Developer-friendly tools for faster and more convenient Play Mode iteration in Unity.",
+  "unity": "6000.0",
+  "author": {
+    "name": "Evgenii Okhotnikov",
+    "url": "https://github.com/okhotnikov"
+  },
+  "keywords": [
+    "PlayMode",
+    "Play",
+    "Scene",
+    "unity"
+  ],
+  "license": "MIT",
+  "licensesUrl": "https://github.com/okhotnikov/RapidoPlay_UnityAsset/blob/main/LICENSE.md",
+  "changelogUrl": "https://github.com/okhotnikov/RapidoPlay_UnityAsset/releases",
+  "documentationUrl": "https://github.com/okhotnikov/RapidoPlay_UnityAsset"
+}
