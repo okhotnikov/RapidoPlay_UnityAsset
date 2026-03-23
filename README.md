@@ -1,6 +1,6 @@
 # RapidoPlay for Unity 6 🚀
 # MyLocalization_UnityAsset
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/okhotnikov/RapidoPlay_UnityAsset) ![GitHub License](https://img.shields.io/github/license/okhotnikov/RapidoPlay_UnityAsset)
+![Version](https://img.shields.io/badge/version-1.0.1-blue.svg) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/okhotnikov/RapidoPlay_UnityAsset) ![GitHub License](https://img.shields.io/github/license/okhotnikov/RapidoPlay_UnityAsset)
 
 **RapidoPlay** is a lightweight, native extension for the Unity 6 Editor that brings lightning-fast scene switching and advanced Play Mode controls directly to your main toolbar. 
 
