@@ -28,6 +28,7 @@ namespace RapidoPlay
             {
                 MainToolbar.Refresh("RapidoPlay/PlayFirstSceneButton");
                 MainToolbar.Refresh("RapidoPlay/PlaySelectedSceneButton");
+                HandleOnPlayModeChanged(state);
             };
         }
 
@@ -134,13 +135,21 @@ namespace RapidoPlay
             SwitchScene(sceneAsset);
         }
 
-        static void SwitchScene(SceneAsset scene)
+        private static void SwitchScene(SceneAsset scene)
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return;
 
             EditorSceneManager.playModeStartScene = scene;
             EditorApplication.isPlaying = true;
+        }
+
+        private static void HandleOnPlayModeChanged(PlayModeStateChange playModeState)
+        {
+            if (playModeState == PlayModeStateChange.ExitingPlayMode)
+            {
+                EditorSceneManager.playModeStartScene = null;
+            }
         }
 
         public static void SelectScene(string path)
