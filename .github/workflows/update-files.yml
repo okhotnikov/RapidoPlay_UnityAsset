@@ -1,0 +1,85 @@
+name: Release and Update Files
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Version: $VERSION"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Conventional Changelog CLI
+        run: npm install -g conventional-changelog-cli
+
+      - name: Update README.md and package.json
+        run: |
+          sed -i -E "s/version-[0-9]+\.[0-9]+\.[0-9]+-blue/version-${{ env.VERSION }}-blue/g" README.md
+          
+          if [ -f "package.json" ]; then
+            sed -i -E "s/\"version\": \"[^\"]+\"/\"version\": \"${{ env.VERSION }}\"/" package.json
+          fi
+
+      - name: Generate Changelog
+        run: |
+          touch CHANGELOG.md
+        
+          npx conventional-changelog-cli -p angular -i CHANGELOG.md -s -r 0
+          npx conventional-changelog-cli -p angular -r 1 > RELEASE_NOTES.md
+
+          if [ ! -s RELEASE_NOTES.md ] || [ -z "$(cat RELEASE_NOTES.md | tr -d '[:space:]')" ]; then
+            echo "⚠️ Log is empty (git log)..."
+            echo "### Changes in v${{ env.VERSION }}" > RELEASE_NOTES.md
+            echo "" >> RELEASE_NOTES.md
+            
+            PREV_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || git rev-list --max-parents=0 HEAD)        
+            git log ${PREV_TAG}..HEAD --oneline >> RELEASE_NOTES.md
+          fi
+          
+          echo "=== OUTPUT RELEASE NOTES ==="
+          cat RELEASE_NOTES.md
+      - name: Commit files to main
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add CHANGELOG.md README.md package.json || true
+          
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore(release): update files for v${{ env.VERSION }} [skip ci]"
+          
+          git push origin main
+
+      - name: Move Tag to the new commit
+        run: |
+          git tag -f v${{ env.VERSION }}
+          git push -f origin v${{ env.VERSION }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release v${{ env.VERSION }}
+          tag_name: v${{ env.VERSION }}
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
